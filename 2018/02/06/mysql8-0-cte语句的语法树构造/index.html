@@ -103,19 +103,26 @@
   <meta name="keywords" content="Hexo, NexT" />
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="mysql8.0 cte语句的语法树构造mysql8.0中生成parse tree节点和初始化parse tree节点被分成了两部分，通过MYSQLparse生成parse tree，每个节点由一个class构成，然后调用顶层的contextualize函数逐层初始化各个树节点。关于这部分的更详细内容建议先阅读MySQL 8.0对Parser所做的改进 mysql8.0中的语法解析会将带有子查询以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql8.0 cte语句的语法树构造">
+<meta property="og:url" content="http://yoursite.com/2018/02/06/mysql8-0-cte语句的语法树构造/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="mysql8.0 cte语句的语法树构造mysql8.0中生成parse tree节点和初始化parse tree节点被分成了两部分，通过MYSQLparse生成parse tree，每个节点由一个class构成，然后调用顶层的contextualize函数逐层初始化各个树节点。关于这部分的更详细内容建议先阅读MySQL 8.0对Parser所做的改进 mysql8.0中的语法解析会将带有子查询以">
+<meta property="og:image" content="http://yoursite.com/2018/02/06/mysql8-0-cte语句的语法树构造/normal_sql.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/02/06/mysql8-0-cte语句的语法树构造/cte_sql.jpg">
+<meta property="og:updated_time" content="2018-02-06T02:16:56.231Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="mysql8.0 cte语句的语法树构造">
+<meta name="twitter:description" content="mysql8.0 cte语句的语法树构造mysql8.0中生成parse tree节点和初始化parse tree节点被分成了两部分，通过MYSQLparse生成parse tree，每个节点由一个class构成，然后调用顶层的contextualize函数逐层初始化各个树节点。关于这部分的更详细内容建议先阅读MySQL 8.0对Parser所做的改进 mysql8.0中的语法解析会将带有子查询以">
+<meta name="twitter:image" content="http://yoursite.com/2018/02/06/mysql8-0-cte语句的语法树构造/normal_sql.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/02/06/mysql8-0-cte语句的语法树构造/"/>
 
 
 
@@ -124,7 +131,7 @@
     sidebar: "",
   };
 </script>
-  <title>Hexo</title>
+  <title>mysql8.0 cte语句的语法树构造 | Hexo</title>
   
 
 
@@ -171,8 +178,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -243,145 +249,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/06/记mysqltest无法输出结果的一次调试经历/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zdz">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/06/记mysqltest无法输出结果的一次调试经历/" itemprop="url">记mysqltest无法输出结果的一次调试经历</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-06T10:18:12+08:00">2018-02-06</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="记mysqltest无法输出结果的一次调试经历"><a href="#记mysqltest无法输出结果的一次调试经历" class="headerlink" title="记mysqltest无法输出结果的一次调试经历"></a>记mysqltest无法输出结果的一次调试经历</h1><p>在一次测试中尝试用mysqltest对多条sql生成结果集，结果发现其中一条将会返回一个较大结果集(几个G)的查询迟迟不输出结果，但是用mysql客户端运行这条sql却可以很快输出结果</p>
-<p>观察mysqltest卡住时的pstack</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#0  0x00007fee0fc26a81 in memcpy () from /lib64/libc.so.6</span><br><span class="line">#<span class="number">1</span>  <span class="number">0x0000000000471616</span> <span class="function">in <span class="title">my_realloc</span> <span class="params">()</span></span></span><br><span class="line">#2  0x0000000000476a22 in dynstr_append_mem ()</span><br><span class="line">#<span class="number">3</span>  <span class="number">0x0000000000424904</span> <span class="function">in <span class="title">replace_dynstr_append_mem</span><span class="params">(st_dynamic_string*, <span class="keyword">char</span> <span class="keyword">const</span>*, <span class="keyword">unsigned</span> <span class="keyword">long</span>)</span> <span class="params">()</span></span></span><br><span class="line">#4  0x000000000041c30a in append_field(st_dynamic_string*, unsigned int, st_mysql_field*, char*, unsigned long, char) ()</span><br><span class="line">#<span class="number">5</span>  <span class="number">0x000000000041c43a</span> <span class="function">in <span class="title">append_result</span><span class="params">(st_dynamic_string*, st_mysql_res*)</span> <span class="params">()</span></span></span><br><span class="line">#6  0x000000000041d349 in run_query_normal(st_connection*, st_command*, int, char*, unsigned long, st_dynamic_string*, st_dynamic_string*) ()</span><br><span class="line">#<span class="number">7</span>  <span class="number">0x000000000041ea34</span> <span class="function">in <span class="title">run_query</span><span class="params">(st_connection*, st_command*, <span class="keyword">int</span>)</span> <span class="params">()</span></span></span><br><span class="line">#8  0x000000000042092d in main ()</span><br></pre></td></tr></table></figure>
-<p>可以看到mysqltest长时间处在memcpy处，同时通过htop会发现mysqltest占用的内存在以没几秒1M的速度上升。</p>
-<p>我们再看一下函数dynstr_append_mem和my_realloc</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">my_bool <span class="title">dynstr_append_mem</span><span class="params">(DYNAMIC_STRING *str, <span class="keyword">const</span> <span class="keyword">char</span> *append,</span></span></span><br><span class="line"><span class="function"><span class="params">              <span class="keyword">size_t</span> length)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *new_ptr;</span><br><span class="line">  <span class="keyword">if</span> (str-&gt;length+length &gt;= str-&gt;max_length)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">size_t</span> new_length=(str-&gt;length+length+str-&gt;alloc_increment)/</span><br><span class="line">      str-&gt;alloc_increment;</span><br><span class="line">    new_length*=str-&gt;alloc_increment;</span><br><span class="line">    <span class="keyword">if</span> (!(new_ptr=(<span class="keyword">char</span>*) my_realloc(key_memory_DYNAMIC_STRING,</span><br><span class="line">                                     str-&gt;str,new_length,MYF(MY_WME))))</span><br><span class="line">      <span class="keyword">return</span> TRUE;</span><br><span class="line">    str-&gt;str=new_ptr;</span><br><span class="line">    str-&gt;max_length=new_length;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">memcpy</span>(str-&gt;str + str-&gt;length,append,length);</span><br><span class="line">  str-&gt;length+=length;</span><br><span class="line">  str-&gt;str[str-&gt;length]=<span class="number">0</span>;          <span class="comment">/* Safety for C programs */</span></span><br><span class="line">  <span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> *</span><br><span class="line">my_realloc(PSI_memory_key key, <span class="keyword">void</span> *ptr, <span class="keyword">size_t</span> size, myf flags)</span><br><span class="line">&#123;   </span><br><span class="line">  ...             </span><br><span class="line">  new_ptr= my_malloc(key, size, flags);</span><br><span class="line">  <span class="keyword">if</span> (likely(new_ptr != <span class="literal">NULL</span>))</span><br><span class="line">  &#123;</span><br><span class="line">    ...</span><br><span class="line">    min_size= (old_size &lt; size) ? old_size : size;</span><br><span class="line">    <span class="built_in">memcpy</span>(new_ptr, ptr, min_size);</span><br><span class="line">    my_free(ptr); </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> new_ptr;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以发现当str内存不足时会重新申请内存，并将原str中的内容复制到新申请的内存中。注意到新申请的内存大小是</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">size_t</span> new_length=(str-&gt;length+length+str-&gt;alloc_increment)/</span><br><span class="line">  str-&gt;alloc_increment;</span><br><span class="line">new_length*=str-&gt;alloc_increment;</span><br></pre></td></tr></table></figure>
-<p>那么当length和str-&gt;alloc_increment相差不大的时候，新申请的内存大小基本是几个str-&gt;alloc_increment上下，我们再来看一下main函数和append_result函数</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">while</span> (!read_command(&amp;command) &amp;&amp; !abort_flag)</span><br><span class="line">  &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">case</span> Q_QUERY:</span><br><span class="line">      ...</span><br><span class="line">      run_query(cur_con, command, flags);</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">/* Write result from command to log file immediately */</span></span><br><span class="line">    log_file.write(&amp;ds_res);</span><br><span class="line">    log_file.flush();</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">append_result</span><span class="params">(DYNAMIC_STRING *ds, MYSQL_RES *res)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">while</span> ((row = mysql_fetch_row(res)))</span><br><span class="line">  &#123;</span><br><span class="line">    uint i;</span><br><span class="line">    lengths = mysql_fetch_lengths(res);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; num_fields; i++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">/* looks ugly , but put here to convince parfait */</span></span><br><span class="line">      assert(lengths);</span><br><span class="line">      append_field(ds, i, &amp;fields[i],</span><br><span class="line">                   row[i], lengths[i], !row[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!display_result_vertically)</span><br><span class="line">      dynstr_append_mem(ds, <span class="string">"\n"</span>, <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过main函数我们可以看到mysqltest是将一条sql的结果处理完再从内存写入磁盘的，在处理sql结果的append_result函数中对于每一行数据都会调用append_field进而可能重新申请内存。通过gdb我们看到str-&gt;alloc_increment是2048，考虑到返回的结果集较大，且行数较多，而每一行数据基本不超过2048个字节，那么每append几行的时候可能就要重新申请内存，而且每次多申请的内存可能就只有一个str-&gt;alloc_increment大小，同时申请新内存也意味着要将之前的内容拷贝到新申请的内存中，结合htop中观察到的内存缓慢增长，可以认为mysqltest应该是由于每次新申请的内存过小而陷入了频繁的copy之前的行数据的循环中。</p>
-<p>一个简单的解决方案：将alloc_increment做成一个可配置的变量，默认是2048，在返回结果集较大的情况下用户可以手动指定该值为一个较大的值，从而而避免频繁的内存拷贝导致长时间无法输出结果。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">//init_dynamic_string(&amp;ds_res, "", 2048, 2048);</span></span><br><span class="line">  <span class="comment">//init_dynamic_string(&amp;ds_result, "", 1024, 1024);</span></span><br><span class="line"></span><br><span class="line">  parse_args(argc, argv);</span><br><span class="line"></span><br><span class="line">  init_dynamic_string(&amp;ds_res, <span class="string">""</span>, <span class="number">2048</span>, res_alloc_increment);</span><br><span class="line">  init_dynamic_string(&amp;ds_result, <span class="string">""</span>, <span class="number">1024</span>, res_alloc_increment);</span><br><span class="line">  ...</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">run_query</span><span class="params">(struct st_connection *cn, struct st_command *command, <span class="keyword">int</span> flags)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">if</span> (display_result_sorted)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">       Collect the query output in a separate string</span></span><br><span class="line"><span class="comment">       that can be sorted before it's added to the</span></span><br><span class="line"><span class="comment">       global result string</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="comment">//init_dynamic_string(&amp;ds_sorted, "", 1024, 1024);</span></span><br><span class="line">    init_dynamic_string(&amp;ds_sorted, <span class="string">""</span>, <span class="number">1024</span>, res_alloc_increment);</span><br><span class="line">    save_ds= ds; <span class="comment">/* Remember original ds */</span></span><br><span class="line">    ds= &amp;ds_sorted;</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>效果如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./mysqltest --help</span><br><span class="line">  ...</span><br><span class="line">  -I, --res-alloc-increment=# </span><br><span class="line">                     realloc increment bytes for result</span><br></pre></td></tr></table></figure>
-<p>本例中通过指定-I参数为1000000000成功使mysqltest快速输出了结果。如果小伙伴们有遇到类似mysqltest长时间无法输出结果的问题时可以考虑一下这个原因。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
 
   
 
@@ -413,9 +283,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/02/06/mysql8-0-cte语句的语法树构造/" itemprop="url">mysql8.0 cte语句的语法树构造</a></h1>
+          <h1 class="post-title" itemprop="name headline">mysql8.0 cte语句的语法树构造</h1>
         
 
         <div class="post-meta">
@@ -464,9 +332,7 @@
       
 
       
-        
-          
-            <h1 id="mysql8-0-cte语句的语法树构造"><a href="#mysql8-0-cte语句的语法树构造" class="headerlink" title="mysql8.0 cte语句的语法树构造"></a>mysql8.0 cte语句的语法树构造</h1><p>mysql8.0中生成parse tree节点和初始化parse tree节点被分成了两部分，通过MYSQLparse生成parse tree，每个节点由一个class构成，然后调用顶层的contextualize函数逐层初始化各个树节点。关于这部分的更详细内容建议先阅读<a href="http://mysql.taobao.org/monthly/2017/04/02/" title="MySQL 8.0对Parser所做的改进" target="_blank" rel="noopener">MySQL 8.0对Parser所做的改进</a></p>
+        <h1 id="mysql8-0-cte语句的语法树构造"><a href="#mysql8-0-cte语句的语法树构造" class="headerlink" title="mysql8.0 cte语句的语法树构造"></a>mysql8.0 cte语句的语法树构造</h1><p>mysql8.0中生成parse tree节点和初始化parse tree节点被分成了两部分，通过MYSQLparse生成parse tree，每个节点由一个class构成，然后调用顶层的contextualize函数逐层初始化各个树节点。关于这部分的更详细内容建议先阅读<a href="http://mysql.taobao.org/monthly/2017/04/02/" title="MySQL 8.0对Parser所做的改进" target="_blank" rel="noopener">MySQL 8.0对Parser所做的改进</a></p>
 <p>mysql8.0中的语法解析会将带有子查询以及union等操作的复杂查询分解成更小的执行单元并用下述的两种结构进行关联</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SELECT_LEX</span>:</span> <span class="keyword">public</span> Sql_alloc</span><br><span class="line">&#123;</span><br><span class="line">  SELECT_LEX *next;</span><br><span class="line">  <span class="comment">/// The query expression containing this query block.</span></span><br><span class="line">  SELECT_LEX_UNIT *master;</span><br><span class="line">  <span class="comment">/// The first query expression contained within this query block.</span></span><br><span class="line">  SELECT_LEX_UNIT *slave;</span><br><span class="line">  ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SELECT_LEX_UNIT</span>:</span> <span class="keyword">public</span> Sql_alloc</span><br><span class="line">&#123;</span><br><span class="line">  SELECT_LEX_UNIT *next;</span><br><span class="line">  SELECT_LEX *master;</span><br><span class="line">  <span class="comment">/// The first query block in this query expression.</span></span><br><span class="line">  SELECT_LEX *slave;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>我们可以通过下面的例子更形象的观察一下一条普通sql的大致分解情况</p>
@@ -502,8 +368,6 @@
 <p><a href="http://mysql.taobao.org/monthly/2017/04/02/" title="MySQL 8.0对Parser所做的改进" target="_blank" rel="noopener">1</a>. <a href="http://mysql.taobao.org/monthly/2017/04/02/" title="MySQL 8.0对Parser所做的改进" target="_blank" rel="noopener">MySQL 8.0对Parser所做的改进</a></p>
 <p><a href="https://yq.aliyun.com/articles/71981?spm=5176.100239.blogcont96418.17.CxWw4v" title="CTE执行过程与实现原理" target="_blank" rel="noopener">2</a>. <a href="https://yq.aliyun.com/articles/71981?spm=5176.100239.blogcont96418.17.CxWw4v" title="CTE执行过程与实现原理" target="_blank" rel="noopener">CTE执行过程与实现原理</a></p>
 
-          
-        
       
     </div>
     
@@ -520,12 +384,28 @@
       
 
       
+      
+      
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/06/记mysqltest无法输出结果的一次调试经历/" rel="prev" title="记mysqltest无法输出结果的一次调试经历">
+                记mysqltest无法输出结果的一次调试经历 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -535,14 +415,19 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -563,8 +448,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -609,6 +503,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql8-0-cte语句的语法树构造"><span class="nav-number">1.</span> <span class="nav-text">mysql8.0 cte语句的语法树构造</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -735,6 +645,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
 
   
 
